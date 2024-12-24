@@ -1,0 +1,62 @@
+import express from "express"
+import db from "./config/db.js";
+import juegoRoutes from "./routes/juegoRoutes.js";
+import usuarioRoutes from "./routes/usuarioRoutes.js";
+import desarrolladorRoutes from "./routes/desarrolladorRoutes.js";
+import setupAssociations from "./models/associations.js";
+import cors from 'cors';
+import dotenv from 'dotenv';
+
+const app = express();
+
+// Permite recibir datos de tipo JSON
+app.use(express.json());
+
+// Configuración del puerto del servidor
+const PORT = process.env.PORT || 4000; 
+
+app.listen(PORT, () => {
+    console.log(`Servidor funcionando en el puerto ${PORT}`)
+});
+
+dotenv.config();
+
+const dominiosPermitidos = [process.env.FRONTEND_URL];
+
+const corsOptions = {
+    origin: function(origin, callback) {
+        if (dominiosPermitidos.indexOf(origin) !== -1) {
+            // El origen está permitido, o la solicitud es del mismo origen (origin es null)
+            callback(null, true);
+        } else {
+            callback(new Error('No permitido por CORS'));
+        }
+    },
+};
+
+// Enable cors
+app.use(cors({
+    origin: '*', // Permitir solicitudes desde tu frontend
+    methods: ['GET', 'POST', 'PUT', 'DELETE'], // Métodos permitidos
+    allowedHeaders: ['Content-Type', 'Authorization'], // Encabezados permitidos
+}));
+
+// Manejo del routing
+app.use('/api/usuarios', usuarioRoutes);
+app.use('/api/juegos', juegoRoutes);
+app.use('/api/desarrollador', desarrolladorRoutes);
+
+// Generar asociaciones
+setupAssociations();
+
+// // Conectar la base de datos
+// const conectarDB = async () => {
+//     try {
+//         await db.authenticate();
+//         console.log('Conexión a la base de datos EXITOSA!');
+//     } catch (error) {
+//         console.log(error);
+//     }
+// }
+
+// conectarDB();
