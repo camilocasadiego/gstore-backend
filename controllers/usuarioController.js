@@ -6,34 +6,40 @@ const autenticar = async (req, res) => {
     // Recibir los datos
     const {correo, password} = req.body
 
-    // Buscar el usuario por su correo en la base de datos
-    const usuario = await Usuario.findOne({where: {correo}});
-
     // Verificar si el usuario rellenó los campos (trim() elimina los espacios en blanco)
-    if(correo?.trim() && password?.trim()){
-        // Verificar si el usuario se encuentra registrado
-        if(usuario){
-            const { id, usuario: nombreUsuario, correo, confirmado } = usuario; // Cambia "usuario" a "nombreUsuario"
-            if(confirmado){
-                // Revisar si el correo y la contraseña son correctos
-                if(await usuario.comprobarPassword(password)){
-                    // TODO: Enviar correo de confirmación
-                    // TODO: Autenticar
-                    res.json({
-                        id,
-                        nombreUsuario,
-                        correo,
-                        token: generarJWT(id)
-                    });
-                }else{
-                    res.json({msg: "Credenciales inválidas. Por favor, verifica tu correo y contraseña."});
-                }
-            }else{
-                res.json({msg: "Tu cuenta no se encuentra confirmada"});
-            }
-        }
+    if(correo?.trim() === '' && password?.trim() === ''){
+        // Enviar alerta al usuario (error.status...)
+        res.json({msg: "Debes rellenar todos los campos"});
+        return;
+    }
+
+    // Buscar el usuario por su correo en la base de datos
+    const user = await Usuario.findOne({
+        where:{ correo }
+    });
+    
+    // Verificar si el usuario se encuentra registrado
+    if(!user){
+        res.json({msg: "No se encontró ningún usuario asociado a esta cuenta"});    
+        return;
+    }
+    
+    if(!user.confirmado){
+        res.json({msg: "La cuenta aun no se encuentra confirmada"});  
+        return;  
+    }
+            
+    // Revisar si el correo y la contraseña son correctos
+    if(await user.comprobarPassword(password)){
+        const { id, usuario, correo } = user;
+        res.json({
+            id,
+            usuario,
+            correo,
+            token: generarJWT(id)
+        });
     }else{
-        res.json({msg: "Debes ingresar tus datos"});
+        res.json({msg: "Credenciales inválidas. Por favor, verifica tu correo y contraseña."});
     }
 }
 
@@ -143,10 +149,85 @@ const perfil = (req, res) => {
     res.json(usuario);
 }
 
+// Busca si el usuario se encuentra en uso
+const buscarUsuario = async (req, res) => {
+    console.log("Buscando usuario");
+    const {usuario} = req.params;
+    console.log(usuario);
 
+    try {
+        const existeUsuario = await Usuario.findOne({
+            where: {
+                usuario
+            }
+        });
+
+        res.json(existeUsuario);
+
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+// Busca si el usuario se encuentra en uso
+const buscarCorreo = async (req, res) => {
+    console.log("Buscando correo");
+    const {correo} = req.params;
+    console.log(correo);
+
+    try {
+        const existeCorreo = await Usuario.findOne({
+            where: {
+                correo
+            }
+        });
+
+        res.json(existeCorreo);
+
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+// Guarda los cambios
+const actualizarPerfil = async (req, res) => {
+    const { id, usuario, correo } = req.body;
+    
+    try {
+        const user = await Usuario.findOne({
+            attributes: ['id', 'usuario', 'correo'],
+            where: {
+                id
+            }
+        });
+
+        if(user){
+            user.usuario = req.body.usuario || user.usuario;
+            user.correo = req.body.correo || user.correo;
+
+            try {
+                const usuarioActualizado = await user.save();
+                console.log(usuarioActualizado);
+                res.json(usuarioActualizado);
+            } catch (error) {
+                console.log(error);
+            }
+        }
+
+        console.log(user);
+    } catch (error) {
+        console.log(error);
+    }
+
+    console.log("Actualizando Perfil");
+
+}
 
 export {
     autenticar,
     crearCuenta,
     perfil,
+    buscarUsuario,
+    buscarCorreo,
+    actualizarPerfil
 }

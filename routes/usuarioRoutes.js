@@ -1,5 +1,5 @@
 import express from "express";
-import { autenticar, crearCuenta, perfil } from "../controllers/usuarioController.js";
+import { actualizarPerfil, autenticar, buscarCorreo, buscarUsuario, crearCuenta, perfil } from "../controllers/usuarioController.js";
 import checkAuth from "../middleware/checkAuth.js";
 
 const router = express.Router();
@@ -21,7 +21,9 @@ router.post('/crear-cuenta', crearCuenta);
 
 // Perfil
 router.get('/perfil', checkAuth, perfil);
-
+router.get('/usuario/:usuario', buscarUsuario);
+router.get('/correo/:correo', buscarCorreo);
+router.put('/actualizar', checkAuth, actualizarPerfil);
 
 
 export default router;
