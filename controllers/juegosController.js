@@ -14,7 +14,7 @@ const mostrarJuegos = async (req, res) => {
     try {
         const juegos = await Juego.findAndCountAll({
             limit,
-            attributes: ['id', 'nombre', 'precio'],
+            attributes: ['id', 'nombre', 'precio', 'imagen'],
             include: [{
                 model: Genero,
                 attributes: ['genero'],
@@ -151,7 +151,8 @@ const infoJuego = async(req, res) => {
                 'nombre',
                 'descripcion',
                 'lanzamiento',
-                'precio'
+                'precio',
+                'imagen'
               ],
               include: [
                 {
@@ -187,7 +188,7 @@ const verMasJuegos = async (req, res) => {
     const offset = page * limit
     try {
         const juegos = await Juego.findAndCountAll({
-            attributes: ['id', 'nombre', 'precio'],
+            attributes: ['id', 'nombre', 'precio', 'imagen'],
             include: [{
                 model: Genero,
                 attributes: [],
@@ -219,7 +220,7 @@ const filtrarJuegos = async (req, res) => {
 
     try {
         const juegos = await Juego.findAndCountAll({
-            attributes: ['id', 'nombre', 'precio'],
+            attributes: ['id', 'nombre', 'precio', 'imagen'],
             include: [{
                 model: Genero,
                 attributes: [],

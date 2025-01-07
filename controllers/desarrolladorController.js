@@ -1,5 +1,9 @@
 import Juego from "../models/Juego.js";
 
+const obtenerImagen = async (req, res) => {
+    console.log("Obteniendo Imagen");
+}
+
 const obtenerJuegos = async (req, res) => {
     const id_desarrollador = req.usuario.id;
 
@@ -35,20 +39,24 @@ const obtenerJuego = async (req, res) => {
 }
 
 const agregarJuego = async (req, res) => {
-    console.log(req.body);
+    // TODO: agregar campo para la imagen en la bd
+    // TODO: verificar que se haya recibido una imagen
+    const imagen = req.file !== undefined ? req.file.filename : '';
     const {nombre, descripcion, lanzamiento, precio} = req.body;
+
     // Verificar que los datos recibidos no esten vacíos
-    if(nombre?.trim() && descripcion?.trim() && lanzamiento?.trim()){
+    if(nombre?.trim() && descripcion?.trim() && lanzamiento?.trim() && imagen){
+        console.log("good")
         if(precio >= 0){
             const existeJuego = await Juego.findOne({where: {nombre}});
-            if(!existeJuego){   
+            if(!existeJuego){  
                 const juego = new Juego (req.body);
-                res.send("Guardando Juego");
                 try{
                     // Se agrega el desarrolador
                     juego.dataValues.desarrollador = req.usuario.id;
+                    juego.dataValues.imagen = imagen;
                     await juego.save();
-                    res.send("Juego almacenado");
+                    res.send(true);
                 }catch (error){
                     console.log(error);
                 }
@@ -67,4 +75,5 @@ export {
     obtenerJuegos,
     obtenerJuego,
     agregarJuego,
+    obtenerImagen
 }

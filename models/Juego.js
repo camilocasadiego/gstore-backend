@@ -25,6 +25,9 @@ const Juego = db.define('juegos', {
     },
     precio: {
       type: DataTypes.DECIMAL(20, 6)
+    },
+    imagen: {
+      type: DataTypes.STRING(50)
     }
 });
 
