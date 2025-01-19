@@ -34,6 +34,7 @@ const Usuario = db.define('usuarios', {
     hooks: {
         // Hook antes de crear un nuevo registro
         beforeCreate: async (usuario) => {
+            console.log("CREANDO!")
             if (usuario.password) {
                 const salt = await bcrypt.genSalt(10);
                 usuario.password = await bcrypt.hash(usuario.password, salt);

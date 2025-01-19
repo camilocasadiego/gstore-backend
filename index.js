@@ -6,6 +6,8 @@ import desarrolladorRoutes from "./routes/desarrolladorRoutes.js";
 import setupAssociations from "./models/associations.js";
 import cors from 'cors';
 import dotenv from 'dotenv';
+import path, { dirname } from "path";
+import { fileURLToPath } from "url";
 
 const app = express();
 
@@ -45,6 +47,15 @@ app.use(cors({
 app.use('/api/usuarios', usuarioRoutes);
 app.use('/api/juegos', juegoRoutes);
 app.use('/api/desarrollador', desarrolladorRoutes);
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+// Serve static files
+const uploadsPath = path.join(__dirname, 'public/uploads');
+const optimizePath = path.join(__dirname, 'public/optimize');
+// console.log("Path:", uploadsPath);
+app.use('/uploads', express.static(uploadsPath));
+app.use('/optimize', express.static(optimizePath));
 
 // Generar asociaciones
 setupAssociations();

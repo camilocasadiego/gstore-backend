@@ -2,6 +2,8 @@ import { Op } from "sequelize";
 import Genero from "../models/Genero.js";
 import Juego from "../models/Juego.js"
 import Usuario from "../models/Usuario.js";
+import { eliminarImagen } from "../helpers/eliminarImagen.js";
+import { helperImg } from "../utils/fileUtils.js";
 
 const mostrarJuegos = async (req, res) => {
     let {limit} = req.query;
@@ -14,7 +16,7 @@ const mostrarJuegos = async (req, res) => {
     try {
         const juegos = await Juego.findAndCountAll({
             limit,
-            attributes: ['id', 'nombre', 'precio'],
+            attributes: ['id', 'nombre', 'precio', 'imagen'],
             include: [{
                 model: Genero,
                 attributes: ['genero'],
@@ -48,10 +50,10 @@ const obtenerGeneros = async (req, res) => {
     }
 }
 
+// TODO: GUARDAR LA IMAGEN y mover esto a "desarrollador"
 const editarJuego = async (req, res) => {
     const {id} = req.params;
     const id_desarrollador = req.usuario.id;
-
     const juego = await Juego.findOne({
         where: {
             id_desarrollador,
@@ -60,16 +62,24 @@ const editarJuego = async (req, res) => {
     });
 
     if(juego){
-        // if(juego.veterinario._id.toString() === req.veterinario._id.toString()){
+        const imagenPrevia = juego.imagen;
+
         juego.nombre = req.body.nombre || juego.nombre;
         juego.descripcion = req.body.descripcion || juego.descripcion;
         juego.genero = req.body.genero || juego.genero;
         juego.desarrollador = req.body.desarrollador || juego.desarrollador;
         juego.lanzamiento = req.body.lanzamiento || juego.lanzamiento;
         juego.precio = req.body.precio || juego.precio;
+        juego.imagen = req.file ? req.file.filename : juego.imagen;
 
         try {
             const juegoActualizado = await juego.save();
+            
+            if(req.file){
+                helperImg(req.file.path, `resize-${req.file.filename}`, 100);
+                eliminarImagen(imagenPrevia);
+            } 
+            
             res.json({
                 msg: "Se actualizó el juego correctamente",
                 juegoActualizado
@@ -151,7 +161,8 @@ const infoJuego = async(req, res) => {
                 'nombre',
                 'descripcion',
                 'lanzamiento',
-                'precio'
+                'precio',
+                'imagen'
               ],
               include: [
                 {
@@ -187,7 +198,7 @@ const verMasJuegos = async (req, res) => {
     const offset = page * limit
     try {
         const juegos = await Juego.findAndCountAll({
-            attributes: ['id', 'nombre', 'precio'],
+            attributes: ['id', 'nombre', 'precio', 'imagen'],
             include: [{
                 model: Genero,
                 attributes: [],
@@ -219,7 +230,7 @@ const filtrarJuegos = async (req, res) => {
 
     try {
         const juegos = await Juego.findAndCountAll({
-            attributes: ['id', 'nombre', 'precio'],
+            attributes: ['id', 'nombre', 'precio', 'imagen'],
             include: [{
                 model: Genero,
                 attributes: [],
