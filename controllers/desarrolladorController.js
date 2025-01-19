@@ -1,8 +1,9 @@
 import Juego from "../models/Juego.js";
-
-const obtenerImagen = async (req, res) => {
-    console.log("Obteniendo Imagen");
-}
+import { helperImg } from "../utils/fileUtils.js";
+// import path, { dirname } from "path";
+// import { fileURLToPath } from "url";
+// const __filename = fileURLToPath(import.meta.url);
+// const __dirname = dirname(__filename);
 
 const obtenerJuegos = async (req, res) => {
     const id_desarrollador = req.usuario.id;
@@ -42,11 +43,11 @@ const agregarJuego = async (req, res) => {
     // TODO: agregar campo para la imagen en la bd
     // TODO: verificar que se haya recibido una imagen
     const imagen = req.file !== undefined ? req.file.filename : '';
+    helperImg(req.file.path, `resize-${req.file.filename}`, 100);
     const {nombre, descripcion, lanzamiento, precio} = req.body;
 
     // Verificar que los datos recibidos no esten vacíos
     if(nombre?.trim() && descripcion?.trim() && lanzamiento?.trim() && imagen){
-        console.log("good")
         if(precio >= 0){
             const existeJuego = await Juego.findOne({where: {nombre}});
             if(!existeJuego){  
@@ -75,5 +76,4 @@ export {
     obtenerJuegos,
     obtenerJuego,
     agregarJuego,
-    obtenerImagen
 }

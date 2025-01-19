@@ -4,12 +4,14 @@ import checkAuth from "../middleware/checkAuth.js";
 import { agregarCarrito, compraCarrito, eliminarCarrito, mostrarCarrito } from "../controllers/carritoController.js";
 import { agregarListaDeseos, eliminarListaDeseos, mostrarListaDeseos } from "../controllers/listaDeseosController.js";
 import { agregarCompras, eliminarCompras, mostrarCompras } from "../controllers/comprasController.js";
+import { upload } from "../utils/fileUtils.js";
 
 const router = express.Router();
 
 // Juegos
 router.get('/ultimos-juegos', mostrarJuegos);
-router.put('/editar-juego/:id', checkAuth, editarJuego);
+// TODO: Cambiar este endpoint a "desarrollador" y modificarlo para recibir imágenes
+router.put('/editar-juego/:id', checkAuth, upload.single('imagen'), editarJuego);
 router.delete('/eliminar-juego/:id', checkAuth, eliminarJuego);
 router.get('/buscar/:nombre', buscarJuego);
 router.get('/consultar/:nombre', consultarJuego);

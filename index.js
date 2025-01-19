@@ -52,8 +52,10 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 // Serve static files
 const uploadsPath = path.join(__dirname, 'public/uploads');
-console.log("Path:", uploadsPath);
+const optimizePath = path.join(__dirname, 'public/optimize');
+// console.log("Path:", uploadsPath);
 app.use('/uploads', express.static(uploadsPath));
+app.use('/optimize', express.static(optimizePath));
 
 // Generar asociaciones
 setupAssociations();
