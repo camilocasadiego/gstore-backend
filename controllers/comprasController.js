@@ -23,11 +23,10 @@ const mostrarCompras = async (req, res) => {
 
 }
 
-const obtenerCompras = async (idsCarrito, id_usuario, juegosCarrito) => {
+// Obtiene los juegos de la biblioteca que sean iguales a los del carrito de un usuario específico
+const validarCarritoEnBiblioteca = async (idsCarrito, id_usuario) => {
 
     try {
-        console.log("Id Usuario:", id_usuario);
-
         const juegosComprados = await Compras.findAll({
             attributes: ['id_juego'],
             where: {
@@ -80,31 +79,40 @@ const obtenerCompras = async (idsCarrito, id_usuario, juegosCarrito) => {
 const agregarCompras = async (req, res) => {
 
     const juegosCarrito = req.body;
-    // console.log("Juegos Carrito:" , juegosCarrito);
     const id_usuario = req.usuario.id;
-    
+
     // Se crea un arreglo con los juegos que se van a eliminar del carrito
     const idsCarrito = juegosCarrito.map(juego => juego.id);
 
-    const juegosComprados = await obtenerCompras(idsCarrito, id_usuario, juegosCarrito);
-
+    // Verifica si los juegos del carrito se encuentran en la biblioteca
+    const juegosComprados = await validarCarritoEnBiblioteca(idsCarrito, id_usuario);
+    
     if(juegosComprados.length === 0){
 
         // TODO: Bloquear el botón de "agregar el carrito si el juego ya se encuentra comprado (Frontend)"
 
         const compra = juegosCarrito.map(juego => ({id_usuario, id_juego: juego.id}));
-    
         try {
             // Se agregan los juegos a la base de datos
             await Compras.bulkCreate(compra);
             // Se eliminan los juegos del carrito
             await Carrito.destroy({ where: {id_juego: idsCarrito}})
-            res.json(idsCarrito);
+            res.json({
+                success: true,
+                msg: 'Juegos comprados correctamente',
+            });
         } catch (error) {
-            res.json({msg: error});
+            // TODO: Mejorar error
+            res.json({
+                success: false,
+                msg: error
+            });
         }
     }else{
-        res.json({msg: "Estas intentado comprar juegos que ya adquiriste!"});
+        res.json({
+            success: false,
+            msg: "No fue posible realizar la compra!"
+        });
     }
 }
 
@@ -134,7 +142,7 @@ const eliminarCompras = async (req, res) => {
 
 export {
     mostrarCompras,
-    obtenerCompras,
+    validarCarritoEnBiblioteca,
     agregarCompras,
     eliminarCompras
 }

@@ -244,7 +244,6 @@ const filtrarJuegos = async (req, res) => {
         });
         
         if(juegos.rows.length !== 0){
-            console.log("Juegos", juegos)
             res.json(
                 juegos.rows
             );
