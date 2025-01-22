@@ -133,7 +133,7 @@ const crearCuenta = async (req, res) => {
         try {
             const usuarioNuevo = new Usuario(req.body);
         
-            // await usuarioNuevo.save();
+            await usuarioNuevo.save();
 
             emailRegistro({
                 correo,
@@ -142,8 +142,8 @@ const crearCuenta = async (req, res) => {
             });
 
             res.json({
-                msg: "Usuario creado correctamente", 
-                usuarios: usuarioNuevo
+                success: true,
+                msg: "Cuenta creada correctamente"
             });
         } catch (error) {
             console.log(error)
