@@ -40,8 +40,6 @@ const obtenerJuego = async (req, res) => {
 }
 
 const agregarJuego = async (req, res) => {
-    // TODO: agregar campo para la imagen en la bd
-    // TODO: verificar que se haya recibido una imagen
     const imagen = req.file !== undefined ? req.file.filename : '';
     helperImg(req.file.path, `resize-${req.file.filename}`, 100);
     const {nombre, descripcion, lanzamiento, precio} = req.body;
@@ -56,8 +54,11 @@ const agregarJuego = async (req, res) => {
                     // Se agrega el desarrolador
                     juego.dataValues.desarrollador = req.usuario.id;
                     juego.dataValues.imagen = imagen;
+                    juego.dataValues.oculto = 0;
+
                     await juego.save();
                     res.send(true);
+                    
                 }catch (error){
                     console.log(error);
                 }
@@ -72,8 +73,27 @@ const agregarJuego = async (req, res) => {
     }
 }
 
+const ocultarJuego = async (req, res) => {
+    const { id } = req.params;
+    console.log(id);
+
+    const juego = await Juego.findOne({where: {id}});
+
+    if(juego){
+        try {
+            juego.oculto = !juego.oculto;
+            const juegoActualizado = await juego.save();
+            res.json(juegoActualizado);
+        } catch (error) {
+            console.log(error);
+        }
+    }
+    
+}
+
 export {
     obtenerJuegos,
     obtenerJuego,
     agregarJuego,
+    ocultarJuego
 }

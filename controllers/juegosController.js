@@ -17,6 +17,7 @@ const mostrarJuegos = async (req, res) => {
         const juegos = await Juego.findAndCountAll({
             limit,
             attributes: ['id', 'nombre', 'precio', 'imagen'],
+            where: {oculto: 0},
             include: [{
                 model: Genero,
                 attributes: ['genero'],
@@ -128,7 +129,8 @@ const buscarJuego = async (req, res) => {
             [Op.like]: `${nombre}%`
           }
         },
-        limit: limit
+        limit: limit,
+        where: {oculto: 0}
     });
 
     res.json(juegos);
@@ -162,7 +164,8 @@ const infoJuego = async(req, res) => {
                 'descripcion',
                 'lanzamiento',
                 'precio',
-                'imagen'
+                'imagen',
+                'oculto'
               ],
               include: [
                 {
@@ -176,7 +179,7 @@ const infoJuego = async(req, res) => {
                   required: true
                 }
               ],
-              where: { id }
+              where: { id, oculto: 0 }
         });
         
         res.json(juego);
@@ -207,6 +210,7 @@ const verMasJuegos = async (req, res) => {
                 }
             }],
             // raw: true,
+            where: {oculto: 0},
             limit,
             offset,
             nest: true
@@ -234,14 +238,14 @@ const filtrarJuegos = async (req, res) => {
             include: [{
                 model: Genero,
                 attributes: [],
-                where: {
-                    genero
-                }
+                where: { genero }
             }],
             // raw: true,
+            where: {oculto: 0},
             limit: LIMIT,
             nest: true
         });
+        console.log(juegos);
         
         if(juegos.rows.length !== 0){
             res.json(

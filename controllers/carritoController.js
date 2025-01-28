@@ -12,6 +12,7 @@ const mostrarCarrito = async (req, res) => {
         const idUsuario = req.usuario.id;
         const juegosEnCarrito = await Juego.findAll({
           attributes: ['id', 'nombre', 'precio'],
+          where: {oculto: 0},
           include: [{
             model: Carrito,
             where: { id_usuario: idUsuario },
