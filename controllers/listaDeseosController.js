@@ -3,14 +3,15 @@ import ListaDeseos from "../models/ListaDeseos.js";
 
 const mostrarListaDeseos = async (req, res) => {
     try {
-        const idUsuario = req.usuario.id;
+        const id_usuario = req.usuario.id;
         const listaDeseosUsuario = await Juego.findAll({
             attributes: ['id', 'nombre', 'precio'], // Selecciona columnas de lista_deseos
+            where: {oculto: 0},
             include: [
                 {
                     model: ListaDeseos,
                     where: {
-                        id_usuario: idUsuario, 
+                        id_usuario, 
                     },
                     
                 },

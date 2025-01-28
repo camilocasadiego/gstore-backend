@@ -28,6 +28,9 @@ const Juego = db.define('juegos', {
     },
     imagen: {
       type: DataTypes.STRING(50)
+    },
+    oculto: {
+      type: DataTypes.TINYINT(1)
     }
 });
 
