@@ -18,7 +18,7 @@ app.use(express.json());
 const PORT = process.env.PORT || 4000; 
 
 app.listen(PORT, () => {
-    console.log(`Servidor funcionando en el puerto ${PORT}`)
+    console.log(`Servidor funcionando en el puerto! ${PORT}`)
 });
 
 dotenv.config();
