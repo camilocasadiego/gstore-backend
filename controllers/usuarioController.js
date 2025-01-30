@@ -6,6 +6,7 @@ import generarToken from "../helpers/generarToken.js";
 import emailRecuperarCuenta from "../helpers/emailRecuperarCuenta.js";
 
 const autenticar = async (req, res) => {
+    console.log("Login...");
     // Recibir los datos
     const {correo, password} = req.body
 
