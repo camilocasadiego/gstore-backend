@@ -6,7 +6,8 @@ import bcrypt from 'bcrypt';
 const Usuario = db.define('usuarios', {
     id: {
         type: DataTypes.INTEGER(),
-        primaryKey: true
+        primaryKey: true,
+        autoIncrement: true, 
     },
     usuario: {
         type: DataTypes.STRING(50),
@@ -17,7 +18,7 @@ const Usuario = db.define('usuarios', {
         allowNull: false
     },
     password: {
-        type: DataTypes.STRING(50),
+        type: DataTypes.STRING(60),
         allowNull: false
     },
     token: {

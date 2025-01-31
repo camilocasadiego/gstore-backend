@@ -13,6 +13,7 @@ const mostrarJuegos = async (req, res) => {
     page = parseInt(page);
     
     const offset = page * limit
+
     try {
         const juegos = await Juego.findAndCountAll({
             limit,
