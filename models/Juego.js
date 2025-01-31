@@ -15,10 +15,10 @@ const Juego = db.define('juegos', {
       type: DataTypes.TEXT
     },
     id_genero: {
-      type: DataTypes.STRING(50)
+      type: DataTypes.INTEGER()
     },
     id_desarrollador: {
-      type: DataTypes.TINYINT(1)
+      type: DataTypes.INTEGER()
     },
     lanzamiento: {
       type: DataTypes.DATE
