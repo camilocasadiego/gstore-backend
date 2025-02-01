@@ -216,12 +216,7 @@ const verMasJuegos = async (req, res) => {
             offset,
             nest: true
         });
-        
-        if(juegos.rows.length !== 0){
-            res.json(juegos);
-        }else{
-            res.json({msg: "Juegos no encontrados"});
-        }
+        res.json(juegos);
     } catch (error) {
         console.log(error);
     }   
@@ -245,16 +240,8 @@ const filtrarJuegos = async (req, res) => {
             where: {oculto: 0},
             limit: LIMIT,
             nest: true
-        });
-        console.log(juegos);
-        
-        if(juegos.rows.length !== 0){
-            res.json(
-                juegos.rows
-            );
-        }else{
-            res.json({msg: "Juegos no encontrados"});
-        }
+        });        
+        res.json(juegos.rows);
     } catch (error) {
         console.log(error);
     }
