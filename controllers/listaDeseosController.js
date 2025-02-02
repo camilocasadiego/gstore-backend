@@ -5,7 +5,7 @@ const mostrarListaDeseos = async (req, res) => {
     try {
         const id_usuario = req.usuario.id;
         const listaDeseosUsuario = await Juego.findAll({
-            attributes: ['id', 'nombre', 'precio'], // Selecciona columnas de lista_deseos
+            attributes: ['id', 'nombre', 'precio', 'imagen'], // Selecciona columnas de lista_deseos
             where: {oculto: 0},
             include: [
                 {
