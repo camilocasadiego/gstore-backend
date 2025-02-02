@@ -121,17 +121,18 @@ const eliminarJuego = async (req, res) => {
 const buscarJuego = async (req, res) => {
     
     const {nombre} = req.params;
+    console.log(nombre);
 
     const limit = 5;
 
     const juegos = await Juego.findAll({
         where: {
           nombre: {
-            [Op.like]: `${nombre}%`
-          }
+            [Op.like]: `${nombre}%`,
+          },
+          oculto:0
         },
         limit: limit,
-        where: {oculto: 0}
     });
 
     res.json(juegos);
