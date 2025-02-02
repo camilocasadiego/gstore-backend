@@ -7,7 +7,7 @@ const mostrarCompras = async (req, res) => {
     try {
         const idUsuario = req.usuario.id;
         const compras = await Juego.findAll({
-          attributes: ['id', 'nombre', 'precio'],
+          attributes: ['id', 'nombre', 'precio', 'imagen'],
           include: [{
             model: Compras,
             where: { id_usuario: idUsuario },
